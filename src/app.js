@@ -5,6 +5,7 @@ import { routes } from "../routes.js";
 import adminRouter from "./routes/Admin.routes.js";
 import { connectDB } from './config/db.config.js'
 import genericRouter from "./routes/generic.routes.js";
+import driverRouter from "./routes/Driver.routes.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(urlencoded({ extended: false, limit: '50mb' }));
 // Admin router
 app.use(routes.generic, genericRouter)
 app.use(routes.adminBase, adminRouter);
+app.use(routes.driverBase, driverRouter);
 
 // PORT
 const PORT = process.env.PORT;

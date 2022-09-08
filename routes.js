@@ -13,6 +13,13 @@ const ADMIN_LOGIN = '/login'
 const ADMIN_DRIVERS = '/drivers'
 
 
+// CATEGORY: DRIVER
+const DRIVER_BASE = '/driver'
+const DRIVER_REGISTER = '/register'
+const DRIVER_LOGIN = '/login'
+const DRIVER_COMPLETE_REGISTRATION = '/conplete-registration'
+
+
 export const routes = {
     // GENERIC ROUTES
     generic: GENERIC,
@@ -39,8 +46,13 @@ export const routes = {
     // Drivers
     adminDrivers: ADMIN_DRIVERS,
     adminApproveDriver: `${ADMIN_DRIVERS}/approve-driver/:did`,
-    adminBlockDriver: `${ADMIN_DRIVERS}/block-driver/:did`
+    adminBlockDriver: `${ADMIN_DRIVERS}/block-driver/:did`,
 
 
     // DRIVER ROUTES
+    driverBase: DRIVER_BASE, 
+    driverRegister: DRIVER_REGISTER,
+    driverLogin: DRIVER_LOGIN,
+    verifyDriverLogin: `${DRIVER_LOGIN}/verify`,
+    driverCompleteRegistration: DRIVER_COMPLETE_REGISTRATION
 }

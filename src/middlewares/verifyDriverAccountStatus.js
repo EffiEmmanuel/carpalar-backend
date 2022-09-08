@@ -1,0 +1,33 @@
+import { DriverModel } from "../models/Driver.model.js";
+
+const verifyDriverAccountStatus = async (req, res, next) => {
+  try {
+    const { driverId } = req.query;
+
+    // Check if the driver exists
+    let driver = await DriverModel.findById(driverId);
+    if (!driver)
+      return res
+        .status(404)
+        .json({ message: "Account does not exist! Please sign up" });
+
+    // Check if the driver's account has been approved
+    if (!driver.isAccountApproved)
+      return res.status(400).json({
+        message:
+          "Sorry, you cannot perform this action. Your account needs to be approved before proceeding with your registration.",
+      });
+
+    // If the account has been approved
+    next();
+  } catch (error) {
+    return res
+      .status(500)
+      .json({
+        message:
+          "An error occured while processing your request. Please try again.",
+      });
+  }
+};
+
+export default verifyDriverAccountStatus;

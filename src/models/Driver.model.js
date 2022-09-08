@@ -49,7 +49,7 @@ export const DriverModel = new mongoose.model(
         ref: "Vehicle",
       },
 
-      isAccountVerified: {
+      isAccountApproved: {
         type: Boolean,
         default: false,
       },

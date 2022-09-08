@@ -1,6 +1,6 @@
 import express from 'express'
 import { routes } from '../../routes.js'
-import { adminLogin, createAdmin, createVehicle, createVehicleBrand, deleteVehicleBrandById, deleteVehicleById, updateVehicleBrandById, updateVehicleById } from '../controllers/Admin.controller.js'
+import { adminLogin, approveDriverById, blockDriverById, createAdmin, createVehicle, createVehicleBrand, deleteVehicleBrandById, deleteVehicleById, getAllDrivers, updateVehicleBrandById, updateVehicleById } from '../controllers/Admin.controller.js'
 import { upload } from '../config/multer.config.js'
 import { verifyAdminToken } from '../middlewares/verifyToken.js'
 const router = express.Router()
@@ -24,11 +24,11 @@ router.delete(routes.adminDeleteVehicleById, verifyAdminToken, deleteVehicleById
 
 // CATEGORY: DRIVERS
 // Get all drivers
-router.get(routes.adminDrivers, verifyAdminToken, createVehicle)
+router.get(routes.adminDrivers, verifyAdminToken, getAllDrivers)
 // Approve driver by id (update)
-router.patch(routes.adminApproveDriver, verifyAdminToken, createVehicle)
+router.patch(routes.adminApproveDriver, verifyAdminToken, approveDriverById)
 // block driver by id (update)
-router.patch(routes.adminBlockDriver, verifyAdminToken, createVehicle)
+router.patch(routes.adminBlockDriver, verifyAdminToken, blockDriverById)
 
 
 // CATEGORY: VEHICLE BRANDS

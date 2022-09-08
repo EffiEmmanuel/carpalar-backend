@@ -78,7 +78,6 @@ export const adminLogin = async (req, res) => {
     // Sign a new JWT token
     let adminToken;
     await jwtSign(payload).then((token) => {
-      console.log("Token", token);
       adminToken = token;
     });
 

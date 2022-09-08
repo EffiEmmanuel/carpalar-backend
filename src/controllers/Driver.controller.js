@@ -75,7 +75,7 @@ export const loginDriver = async (req, res) => {
     });
 
     // Saving the new OTP to the DB
-    await newOTP.save()
+    await newOTP.save();
 
     return res.status(200).json({
       message: "An OTP has been sent to your registered phone number.",
@@ -89,7 +89,6 @@ export const loginDriver = async (req, res) => {
     });
   }
 };
-
 
 // Handles OTP verification and jwt signing
 export const verifyDriverLogin = async (req, res) => {
@@ -110,7 +109,7 @@ export const verifyDriverLogin = async (req, res) => {
 
     // Check if the OTP is correct
     let isOTPCorrect = await OTPModel.findOne({ code: otp, driverId });
-    console.log('OTP:', isOTPCorrect)
+    console.log("OTP:", isOTPCorrect);
     if (!isOTPCorrect)
       return res
         .status(404)
@@ -138,12 +137,27 @@ export const verifyDriverLogin = async (req, res) => {
 
     return res.status(200).json({ message: "Login successful", userToken });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message:
-          "An Error occured while processing your request. Please try again.",
-        error,
-      });
+    return res.status(500).json({
+      message:
+        "An Error occured while processing your request. Please try again.",
+      error,
+    });
   }
+};
+
+// REQUEST NEW OTP
+export const requestNewOTP = async (req, res) => {
+  const { driverId } = req.query;
+  try {
+    // Check if the driver exists
+    let driver = await DriverModel.findById(driverId);
+    if (!driver)
+      return res
+        .status(401)
+        .json({ message: "Bad request. Driver does not exist!" });
+
+    // if driver exists, Send OTP
+    
+    
+  } catch (error) {}
 };

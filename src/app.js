@@ -14,8 +14,8 @@ connectDB()
 
 // Middlewares
 app.use(cors());
-app.use(json({limit: '50mb'}));
 app.use(urlencoded({ extended: false, limit: '50mb' }));
+app.use(json({limit: '50mb'}));
 
 // Admin router
 app.use(routes.generic, genericRouter)

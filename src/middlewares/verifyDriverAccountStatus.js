@@ -15,7 +15,7 @@ const verifyDriverAccountStatus = async (req, res, next) => {
     if (!driver.isAccountApproved)
       return res.status(400).json({
         message:
-          "Sorry, you cannot perform this action. Your account needs to be approved before proceeding with your registration.",
+          "Your account needs to be approved to perform this action.",
       });
 
     // If the account has been approved

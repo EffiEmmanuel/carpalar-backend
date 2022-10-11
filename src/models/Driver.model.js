@@ -9,12 +9,22 @@ export const DriverModel = new mongoose.model(
         required: true,
       },
 
-      lastname: {
+      othername: {
         type: String,
         required: true,
       },
 
-      email: {
+      surname: {
+        type: String,
+        required: true,
+      },
+
+      gender: {
+        type: String,
+        required: true,
+      },
+
+      address: {
         type: String,
         required: true,
       },
@@ -24,22 +34,84 @@ export const DriverModel = new mongoose.model(
         required: true,
       },
 
+      otherPhone: {
+        type: String,
+        required: true,
+      },
+
+      email: {
+        type: String,
+        required: true,
+      },
+
       password: {
         type: String,
         required: true,
       },
 
-      address: {
-        type: String,
-        // required: true
+      dateOfBirth: {
+        type: Date,
+        required: true,
       },
 
-      proofOfAddress: {
+      placeOfBirth: {
         type: String,
-        // required: true
+        required: true,
+      },
+
+      maritalStatus: {
+        type: String,
+        required: true,
+      },
+
+      occupation: {
+        type: String,
+        required: true,
+      },
+
+      yearsOfDrivingExperience: {
+        type: Number,
+        required: true,
+      },
+
+      nationality: {
+        type: String,
+        required: true,
+      },
+
+      highestAcademicQualification: {
+        type: String,
+        required: true,
+      },
+
+      stateOfOrigin: {
+        type: String,
+        required: true,
+      },
+
+      lga: {
+        type: String,
+        required: true,
       },
 
       driversLicense: {
+        type: String,
+        required: true,
+      },
+
+      driversLicenseCloudinaryId: {
+        type: String,
+        required: true,
+      },
+
+      otherHailingPlatforms: {
+        type: String,
+        required: true,
+      },
+
+      // Not required fields
+      // They'll fill these informations after their account is approved
+      proofOfAddress: {
         type: String,
         // required: true
       },
@@ -49,7 +121,31 @@ export const DriverModel = new mongoose.model(
         ref: "Vehicle",
       },
 
+      guarantor: [
+        {
+          type: mongoose.Types.ObjectId,
+          ref: "Guarantor",
+        },
+      ],
+
+      comfortableContractDuration: {
+        type: String,
+      },
+
+      downpaymentBudget: {
+        type: String,
+      },
+
+      otherPaymentAmount: {
+        type: String,
+      },
+
       isAccountApproved: {
+        type: Boolean,
+        default: false,
+      },
+
+      isApplicationComplete: {
         type: Boolean,
         default: false,
       },

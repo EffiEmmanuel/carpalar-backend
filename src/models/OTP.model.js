@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 export const OTPModel = mongoose.model('OTP', mongoose.Schema({
     code: {
         type: String,
-        expires: '5m',
         required: true,
     },
 
@@ -11,5 +10,11 @@ export const OTPModel = mongoose.model('OTP', mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'Driver',
         required: true
+    },
+
+    expiresAt: {
+        type: Date,
+        required: true
     }
+
 }, { timestamps: true }))

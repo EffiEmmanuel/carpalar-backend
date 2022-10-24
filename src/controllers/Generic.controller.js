@@ -5,7 +5,7 @@ import { VehicleBrandModel } from "../models/VehicleBrand.model.js";
 // GET all vehicles
 export const getAllVehicles = async (req, res) => {
   try {
-    const vehicles = await VehicleModel.find();
+    const vehicles = await VehicleModel.find().sort({ createdAt: -1 });
     return res.status(200).json({ message: "Fetched all vehicles", vehicles });
   } catch (error) {
     return res
@@ -39,7 +39,7 @@ export const getVehicleById = async (req, res) => {
 // GET all vehicle brands
 export const getAllVehicleBrands = async (req, res) => {
   try {
-    const vehicleBrands = await VehicleBrandModel.find();
+    const vehicleBrands = await VehicleBrandModel.find().sort({ createdAt: -1 });
     return res
       .status(200)
       .json({ message: "Fetched all vehicle brands", vehicleBrands });

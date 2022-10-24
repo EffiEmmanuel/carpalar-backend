@@ -11,6 +11,11 @@ export const VehicleModel = new mongoose.model('Vehicle', mongoose.Schema({
         required: true
     },
 
+    price: {
+        type: Number,
+        required: true
+    },
+
     transmission: {
         type: String,
         required: true

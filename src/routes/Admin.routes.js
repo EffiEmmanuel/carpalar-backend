@@ -1,8 +1,9 @@
 import express from 'express'
 import { routes } from '../../routes.js'
-import { adminLogin, approveDriverById, blockDriverById, createAdmin, createVehicle, createVehicleBrand, deleteVehicleBrandById, deleteVehicleById, getAllDrivers, updateVehicleBrandById, updateVehicleById } from '../controllers/Admin.controller.js'
+import { adminGetPendingApplications, adminUpdateDriver, adminGetStats, adminLogin, approveDriverById, blockDriverById, createAdmin, createVehicle, createVehicleBrand, deleteVehicleBrandById, deleteVehicleById, getAllDrivers, updateVehicleBrandById, updateVehicleById, adminDeleteDriver, adminGetTransactions, adminGetTransactionById, adminVerifyTransaction, adminCreateTransaction } from '../controllers/Admin.controller.js'
 import { upload } from '../config/multer.config.js'
 import { verifyAdminToken } from '../middlewares/verifyToken.js'
+import { updateDriver } from '../controllers/Driver.controller.js'
 const router = express.Router()
 
 
@@ -11,6 +12,10 @@ const router = express.Router()
 router.post(routes.adminRegister, createAdmin)
 // Admin Login
 router.post(routes.adminLogin, adminLogin)
+// Admin Get stats
+router.get(routes.adminGetStats, verifyAdminToken, adminGetStats)
+// Admin Get pending applications
+router.get(routes.adminGetPendingApplications, verifyAdminToken , adminGetPendingApplications)
 
 // CATEGORY: VEHICLES
 // Create / add vehicles
@@ -29,6 +34,10 @@ router.get(routes.adminDrivers, verifyAdminToken, getAllDrivers)
 router.patch(routes.adminApproveDriver, verifyAdminToken, approveDriverById)
 // block driver by id (update)
 router.patch(routes.adminBlockDriver, verifyAdminToken, blockDriverById)
+// Edit / Update driver by id (update)
+router.patch(routes.adminUpdateDriver, adminUpdateDriver)
+// Delete driver by id (update)
+router.delete(routes.adminDeleteDriver, verifyAdminToken, adminDeleteDriver)
 
 
 // CATEGORY: VEHICLE BRANDS
@@ -42,9 +51,14 @@ router.delete(routes.adminDeleteVehicleBrandById, verifyAdminToken, deleteVehicl
 
 
 // CATEGORY: TRANSACTIONS
+// Create transaction
+router.post(routes.adminGetTransactions, adminCreateTransaction)
 // Get all transactions
+router.get(routes.adminGetTransactions, verifyAdminToken, adminGetTransactions)
 // Get transaction by id
+router.get(routes.adminGetTransactionById, verifyAdminToken, adminGetTransactionById)
 // Verify transaction
+router.get(routes.adminVerifyTransaction, adminVerifyTransaction)
 
 
 const adminRouter = router

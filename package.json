@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
+    "@types/paystack": "^2.0.1",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.31.0",
@@ -32,6 +33,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.7.8",
     "otp-generator": "^4.0.0",
+    "paystack": "^2.0.1",
     "request": "^2.88.2",
     "sendgrid": "^5.2.3",
     "twilio": "^3.81.0"

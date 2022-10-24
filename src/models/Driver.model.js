@@ -162,7 +162,7 @@ export const DriverModel = new mongoose.model(
 
       isAccountBlocked: {
         type: Boolean,
-        default: false,
+        default: true,
       },
     },
     { timestamps: true }

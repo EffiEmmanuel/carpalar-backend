@@ -590,18 +590,18 @@ export const adminCreateTransaction = async (req, res) => {
     amount,
     channel,
     currency,
-    ipAddress,
     reference,
     driver,
     status,
   } = req.body;
+
+  console.log('BACKEND REQ:', req.body)
 
   if (
     !transactionId ||
     !amount ||
     !channel ||
     !currency ||
-    !ipAddress ||
     !reference ||
     !driver ||
     !status
@@ -612,8 +612,7 @@ export const adminCreateTransaction = async (req, res) => {
   }
 
   try {
-    const transaction = await TransactionModel.find({ transactionId });
-
+    const transaction = await TransactionModel.findOne({ transactionId });
     if (transaction) {
       return res.status(400).json({
         message: "Transaction reference already exists!",
@@ -621,18 +620,17 @@ export const adminCreateTransaction = async (req, res) => {
       });
     }
 
-    transaction = new TransactionModel({
+    const newTransaction = new TransactionModel({
       transactionId,
       amount,
       channel,
       currency,
-      ipAddress,
       reference,
       driver,
       status
     })
 
-    await transaction.save()
+    await newTransaction.save()
 
     return res.status(201).json({
       message: "Transaction created successfully!",
@@ -709,11 +707,4 @@ export const adminVerifyTransaction = async (req, res) => {
       message: "Transaction verification failed.",
     });
   }
-
-  // await paystack.transaction.verify(refId).then((res) => {
-  // return res.status(200).json({
-  //   message: "Transaction successfully verified.",
-  //   transactionDetails: res.data,
-  // });
-  // });
 };

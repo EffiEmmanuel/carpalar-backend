@@ -5,12 +5,12 @@ export const TransactionModel = new mongoose.model(
   new mongoose.Schema(
     {
       transactionId: {
-        type: String,
+        type: Number,
         required: true,
       },
       
       amount: {
-        type: String,
+        type: Number,
         required: true,
       },
 
@@ -20,11 +20,6 @@ export const TransactionModel = new mongoose.model(
       },
 
       currency: {
-        type: String,
-        required: true,
-      },
-
-      ipAddress: {
         type: String,
         required: true,
       },
@@ -40,9 +35,8 @@ export const TransactionModel = new mongoose.model(
       },
 
       status: {
-        type: Boolean,
+        type: String,
         required: true,
-        default: false,
       },
     },
     { timestamps: true }

@@ -166,9 +166,11 @@ export const registerDriver = async (req, res) => {
 
 export const completeRegistration = async (req, res) => {
   const { guarantorOne, guarantorTwo, vehicle, comfortableContractDuration, downpaymentBudget, otherPaymentAmount } = req.body
-  const driverId = req.query
+  const { driverId } = req.query
 
-  if (!guarantorOne || !guarantorTwo || !vehicle || !comfortableContractDuration || !downpaymentBudget || !otherPaymentAmount) {
+  console.log('COMPLETE REG REQ:', req.body)
+
+  if (!guarantorOne || !guarantorTwo || !vehicle || !comfortableContractDuration || !downpaymentBudget) {
     return res.status(401).json({ message: 'Please fill out the missing fields' })
   }
   
@@ -177,16 +179,45 @@ export const completeRegistration = async (req, res) => {
   }
 
   try {
+    console.log('INSIDE TRY-CATCH')
     let driver = await DriverModel.findById(driverId)
+    console.log('AFTER FIND DRIVER')
     if(driver.isApplicationComplete) {
       return res.status(400).json({ message: 'Invalid action! This action cannot be performed more than once!' })
     }
-
+    
+    console.log('BEFORE DESTRUCTURING')
     let guarantor1 = new GuarantorModel({
-      ...guarantorOne
+      name: guarantorOne.name,
+      relationship: guarantorOne.relationship,
+      phone: guarantorOne.phone,
+      email: guarantorOne.email,
+      address: guarantorOne.address,
+      jobTitle: guarantorOne.jobTitle,
+      bvn: guarantorOne.bvn,
+      nin: guarantorOne.nin,
+      driver: guarantorOne.driverId
     })
-
-    console.log('GUARANTOR 1:', guarantor1)
+    
+    let guarantor2 = new GuarantorModel({
+      name: guarantorTwo.name,
+      relationship: guarantorTwo.relationship,
+      phone: guarantorTwo.phone,
+      email: guarantorTwo.email,
+      address: guarantorTwo.address,
+      jobTitle: guarantorTwo.jobTitle,
+      bvn: guarantorTwo.bvn,
+      nin: guarantorTwo.nin,
+      driver: guarantorTwo.driverId
+    })
+    
+    // Save to guarantor collections
+    await guarantor1.save()
+    await guarantor2.save()
+    // Update driver collection
+    setIsApplicationComplete(driverId)
+    
+    return res.status(201).json({ message: 'Your registration has been completed successfully!' })
 
   } catch (error) {
     res.status(500).json({ message: 'An error occured while processing your request. Please try again.', error })
@@ -693,6 +724,21 @@ export const updateDriver = async (req, res) => {
   const driverId = req.query.driverId;
   try {
     const driver = await DriverModel.findByIdAndUpdate(driverId, req.body);
+    return res
+      .status(201)
+      .json({ message: "Your details have been updated successfully", driver });
+  } catch (error) {
+    return res.status(500).json({
+      message:
+        "Sorry, an error occured while we procesed your request. Please try again",
+    });
+  }
+};
+
+// UPDATE DRIVER DETAILS
+export const setIsApplicationComplete = async (driverId) => {
+  try {
+    const driver = await DriverModel.findByIdAndUpdate(driverId, { isApplicationComplete: true });
     return res
       .status(201)
       .json({ message: "Your details have been updated successfully", driver });

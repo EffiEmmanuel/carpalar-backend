@@ -53,7 +53,6 @@ router.patch(
 router.patch(
   routes.driverCompleteRegistration,
   verifyDriverAccountStatus,
-  verifyDriverToken,
   completeRegistration
 );
 // MAKE PAYMENTS

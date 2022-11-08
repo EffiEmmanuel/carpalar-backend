@@ -63,14 +63,10 @@ export const verifyDriverToken = async (req, res, next) => {
       // Using split because the header value is expected to be in the format below
       // token: Bearer xxxxx
       const token = authHeader.split(" ")[1];
-      console.log("token:", token);
       const decoded = jwt.verify(token, process.env.JWT_SECRET, null);
-      console.log("decoded token:", decoded);
-
       // Check db for valid Driver
       // const driver = await DriverModel.findById(decoded._id)
       // if(!driver) return res.status()
-
       req.driver = decoded;
       next();
     } else {

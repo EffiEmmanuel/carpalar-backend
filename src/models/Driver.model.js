@@ -99,6 +99,11 @@ export const DriverModel = new mongoose.model(
         required: true,
       },
 
+      licenseNumber: {
+        type: String,
+        required: true,
+      },
+
       driversLicenseCloudinaryId: {
         type: String,
         required: true,
@@ -148,6 +153,11 @@ export const DriverModel = new mongoose.model(
       isApplicationComplete: {
         type: Boolean,
         default: false,
+      },
+
+      isRegistrationFeePaid: {
+        type: Boolean,
+        default: false
       },
 
       isEmailVerified: {

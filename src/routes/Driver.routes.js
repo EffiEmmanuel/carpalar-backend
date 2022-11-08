@@ -11,6 +11,7 @@ import {
   requestNewEmailVerificationLink,
   updateDriver,
   completeRegistration,
+  verifyDriverTokenController
 } from "../controllers/Driver.controller.js";
 import verifyDriverAccountStatus from "../middlewares/verifyDriverAccountStatus.js";
 import { upload } from "../config/multer.config.js";
@@ -43,11 +44,14 @@ router.get(
 // VERIFY PHONE
 router.patch(routes.driverVerifyPhone, verifyDriverPhone);
 
+// VERIFY DRIVER TOKEN
+router.get(routes.driverVerifyToken, verifyDriverToken, verifyDriverTokenController)
+
 // SUBMIT REMAINING DOCUMENTS / UPDATE DRIVER
 router.patch(
   routes.driverUpdate,
-  verifyDriverAccountStatus,
-  verifyDriverToken,
+  // verifyDriverAccountStatus,
+  // verifyDriverToken,
   updateDriver
 );
 router.patch(

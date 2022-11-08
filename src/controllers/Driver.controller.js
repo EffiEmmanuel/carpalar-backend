@@ -10,7 +10,6 @@ import cloudinary from "../config/cloudinary.config.js";
 import sendgridMail from "@sendgrid/mail";
 import { GuarantorModel } from "../models/Guarantor.model.js";
 // import
-console.log("API KEY:", process.env.SENDGRID_API_KEY);
 sendgridMail.setApiKey(
   "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"
 );
@@ -41,6 +40,7 @@ export const registerDriver = async (req, res) => {
     highestAcademicQualification,
     stateOfOrigin,
     lga,
+    licenseNumber,
     otherHailingPlatforms,
   } = req.body;
 
@@ -71,6 +71,7 @@ export const registerDriver = async (req, res) => {
     !highestAcademicQualification ||
     !stateOfOrigin ||
     !lga ||
+    !licenseNumber ||
     !driversLicense ||
     !otherHailingPlatforms
   ) {
@@ -118,6 +119,7 @@ export const registerDriver = async (req, res) => {
       highestAcademicQualification,
       stateOfOrigin,
       lga,
+      licenseNumber,
       driversLicense: result.secure_url,
       driversLicenseCloudinaryId: result.public_id,
       otherHailingPlatforms,
@@ -165,28 +167,48 @@ export const registerDriver = async (req, res) => {
 };
 
 export const completeRegistration = async (req, res) => {
-  const { guarantorOne, guarantorTwo, vehicle, comfortableContractDuration, downpaymentBudget, otherPaymentAmount } = req.body
-  const { driverId } = req.query
+  const {
+    guarantorOne,
+    guarantorTwo,
+    vehicle,
+    comfortableContractDuration,
+    downpaymentBudget,
+    otherPaymentAmount,
+  } = req.body;
+  const { driverId } = req.query;
 
-  console.log('COMPLETE REG REQ:', req.body)
+  console.log("COMPLETE REG REQ:", req.body);
 
-  if (!guarantorOne || !guarantorTwo || !vehicle || !comfortableContractDuration || !downpaymentBudget) {
-    return res.status(401).json({ message: 'Please fill out the missing fields' })
+  if (
+    !guarantorOne ||
+    !guarantorTwo ||
+    !vehicle ||
+    !comfortableContractDuration ||
+    !downpaymentBudget
+  ) {
+    return res
+      .status(401)
+      .json({ message: "Please fill out the missing fields" });
   }
-  
-  if(!driverId) {
-    return res.status(401).json({ message: 'Invalid action! Driver id cannot be empty' })
+
+  if (!driverId) {
+    return res
+      .status(401)
+      .json({ message: "Invalid action! Driver id cannot be empty" });
   }
 
   try {
-    console.log('INSIDE TRY-CATCH')
-    let driver = await DriverModel.findById(driverId)
-    console.log('AFTER FIND DRIVER')
-    if(driver.isApplicationComplete) {
-      return res.status(400).json({ message: 'Invalid action! This action cannot be performed more than once!' })
+    console.log("INSIDE TRY-CATCH");
+    let driver = await DriverModel.findById(driverId);
+    console.log("AFTER FIND DRIVER");
+    if (driver.isApplicationComplete) {
+      return res.status(400).json({
+        message:
+          "Invalid action! This action cannot be performed more than once!",
+      });
     }
-    
-    console.log('BEFORE DESTRUCTURING')
+
+    console.log("BEFORE DESTRUCTURING");
     let guarantor1 = new GuarantorModel({
       name: guarantorOne.name,
       relationship: guarantorOne.relationship,
@@ -196,9 +218,9 @@ export const completeRegistration = async (req, res) => {
       jobTitle: guarantorOne.jobTitle,
       bvn: guarantorOne.bvn,
       nin: guarantorOne.nin,
-      driver: guarantorOne.driverId
-    })
-    
+      driver: guarantorOne.driverId,
+    });
+
     let guarantor2 = new GuarantorModel({
       name: guarantorTwo.name,
       relationship: guarantorTwo.relationship,
@@ -208,22 +230,26 @@ export const completeRegistration = async (req, res) => {
       jobTitle: guarantorTwo.jobTitle,
       bvn: guarantorTwo.bvn,
       nin: guarantorTwo.nin,
-      driver: guarantorTwo.driverId
-    })
-    
+      driver: guarantorTwo.driverId,
+    });
+
     // Save to guarantor collections
-    await guarantor1.save()
-    await guarantor2.save()
+    await guarantor1.save();
+    await guarantor2.save();
     // Update driver collection
-    setIsApplicationComplete(driverId)
-    
-    return res.status(201).json({ message: 'Your registration has been completed successfully!' })
+    setIsApplicationComplete(driverId);
 
+    return res
+      .status(201)
+      .json({ message: "Your registration has been completed successfully!" });
   } catch (error) {
-    res.status(500).json({ message: 'An error occured while processing your request. Please try again.', error })
+    res.status(500).json({
+      message:
+        "An error occured while processing your request. Please try again.",
+      error,
+    });
   }
-
-}
+};
 
 const sendEmailVerificationEmail = async (driverId, email, otp) => {
   console.log("inside send verification email function");
@@ -444,6 +470,11 @@ export const verifyDriverPhone = async (req, res) => {
         "An error occured while processing your request. Please try again.",
     });
   }
+};
+
+// VERIFY DRIVER TOKEN
+export const verifyDriverTokenController = async (req, res) => {
+  return res.status(200).json({ message: "Token still valid" });
 };
 
 // VERIFY DRIVER EMAIL
@@ -738,7 +769,9 @@ export const updateDriver = async (req, res) => {
 // UPDATE DRIVER DETAILS
 export const setIsApplicationComplete = async (driverId) => {
   try {
-    const driver = await DriverModel.findByIdAndUpdate(driverId, { isApplicationComplete: true });
+    const driver = await DriverModel.findByIdAndUpdate(driverId, {
+      isApplicationComplete: true,
+    });
     return res
       .status(201)
       .json({ message: "Your details have been updated successfully", driver });

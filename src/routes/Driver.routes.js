@@ -11,7 +11,8 @@ import {
   requestNewEmailVerificationLink,
   updateDriver,
   completeRegistration,
-  verifyDriverTokenController
+  verifyDriverTokenController,
+  getGuarantors
 } from "../controllers/Driver.controller.js";
 import verifyDriverAccountStatus from "../middlewares/verifyDriverAccountStatus.js";
 import { upload } from "../config/multer.config.js";
@@ -59,6 +60,13 @@ router.patch(
   verifyDriverAccountStatus,
   completeRegistration
 );
+
+
+// GUARANTORS
+// GET DRIVER GUARANTORS
+router.get(routes.driverGetGuarantors, verifyDriverToken, getGuarantors)
+
+
 // MAKE PAYMENTS
 
 const driverRouter = router;

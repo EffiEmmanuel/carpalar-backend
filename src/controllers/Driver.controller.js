@@ -598,6 +598,7 @@ export const verifyDriverLogin = async (req, res) => {
     }).sort({
       createdAt: -1,
     });
+    console.log('GL:', driver.guarantor.length);
     console.log("OTP:", isOTPCorrect);
     if (!isOTPCorrect)
       return res.status(404).json({
@@ -612,6 +613,7 @@ export const verifyDriverLogin = async (req, res) => {
 
     // If both the driver exists, the OTP corresponds and has not expired
     // Generate a token and send it to the frontend
+
 
     // Payload to sign
     const payload = {
@@ -639,6 +641,9 @@ export const verifyDriverLogin = async (req, res) => {
       isAccountApproved: driver.isAccountApproved,
       isEmailVerified: driver.isEmailVerified,
       isPhoneVerified: driver.isPhoneVerified,
+      isRegistrationFeePaid: driver.isRegistrationFeePaid,
+      guarantorsLength: driver.guarantor.length,
+      guarantors: driver.guarantor,
       isAccountBlocked: driver.isAccountBlocked,
     };
 
@@ -782,3 +787,30 @@ export const setIsApplicationComplete = async (driverId) => {
     });
   }
 };
+
+// GET DRIVER GUARANTORS
+export const getGuarantors = async (req, res) => {
+  const { driverId } = req.query
+
+  if(!driverId) {
+    return res.status(401).json({ message: 'Driver id is required!' })
+  }
+
+  try {
+    const driver = await DriverModel.findById(driverId)
+    if(!driver) {
+      return res.status(404).json({ message: 'Driver with this id does not exist!' })
+    }
+
+    const guarantors = []
+
+    for (let i=0; i < driver.guarantor.length; i++) {
+      let guarantor = await GuarantorModel.findById(driver.guarantor[i]._id)
+      if(guarantor) guarantors.push(guarantor)
+    }
+
+    return res.status(200).json({ message: 'Guarantors fetched successfully', guarantors })
+  } catch (err) {
+    return res.status(500).json({ message: 'An error occured while we processed your request. Please try again.' })
+  }
+}

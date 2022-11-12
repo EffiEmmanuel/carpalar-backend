@@ -12,7 +12,9 @@ import {
   updateDriver,
   completeRegistration,
   verifyDriverTokenController,
-  getGuarantors
+  getGuarantors,
+  sendGuarantorEmail,
+  createGuarantor
 } from "../controllers/Driver.controller.js";
 import verifyDriverAccountStatus from "../middlewares/verifyDriverAccountStatus.js";
 import { upload } from "../config/multer.config.js";
@@ -65,6 +67,10 @@ router.patch(
 // GUARANTORS
 // GET DRIVER GUARANTORS
 router.get(routes.driverGetGuarantors, verifyDriverToken, getGuarantors)
+// REQUEST GUARANTOR
+router.post(routes.driverGuarantorSendEmail, verifyDriverToken, sendGuarantorEmail)
+// CREATE GUARANTOR
+router.patch(routes.driverAddGuarantor, createGuarantor)
 
 
 // MAKE PAYMENTS

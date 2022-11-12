@@ -423,6 +423,91 @@ const resendEmailVerificationEmail = async (driverId, email, otp) => {
   await sendEmail(email, subject, html);
 };
 
+const sendGuarantorRequestEmail = async (driverId, email) => {
+  console.log("inside send verification email function");
+
+  let driver
+  try {
+    driver = await DriverModel.findById(driverId);
+  } catch (error) {
+    console.log("ERROR:", err);
+  }
+
+  const requestBaseURL = "http://localhost:3000/driver/register-guarantor";
+  const subject = "Carpalar Guarantor Request";
+  const html = `
+  <!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<head>
+  <!-- CSS only -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+    * {
+      font-family: 'Poppins';
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body style="height:100%;width:100%;box-sizing:border-box;margin:0;padding:0;display:flex;flex-direction:column;justify-content:center;align-items:center">
+  <table style="width:100%;border-collapse: seperate;border-spacing:0 15px;font-family=Poppins">
+    <tr>
+      <td style="text-align:center"><a><img style="max-width:28%;margin:30px 0;" src='https://i.postimg.cc/pdLxmbRP/carpalar-png-trimmy.png' border='0' alt='Carpalar Logo' class="logo" /></a></td>
+    </tr>
+
+    <tr style="width:100%;text-align:center">
+      <td>
+        <h3 style="margin:30px 0;font-weight:bold;font-size:2.3rem"><strong>Hi there,</strong></h3>
+        <p style="margin:30px 0;font-size:1.3rem">${
+          driver.firstname
+        } has just requested you to be their guarantor on Carpalar.</p>
+        <p style="margin:30px 0;font-size:1.3rem">Please follow the link below to complete this request for ${
+          driver.firstname
+        }.</p>
+        <small style="margin:30px 0;font-size:1.3rem">This link expires in 2 hours.</small> <br></br>
+        <small style="margin:30px 0;font-size:1.3rem">Not aware of this? Please contact support immediately.</small>
+      </td>
+    </tr>
+
+    <tr style="width: 100%;text-align:center">
+      <td>
+        <a href="${requestBaseURL}?driverId=${String(driverId)}" role="button" style="margin:15px 0;color:#fff;text-decoration:none;padding:15px 30px;border-radius:10px;background-color:#4169e1;border:none;display:inline-block">Accept request</a>
+      </td>
+    </tr>
+
+    <tr style="width: 100%;text-align:center">
+      <td>
+        <small>Use the link below if the button does not work</small> <br></br>
+        <a href="${requestBaseURL}?driverId=${String(driverId)}">${requestBaseURL}?driverId=${String(driverId)}</a>
+      </td>
+    </tr>
+
+    <tr style="margin-top:10px;color:#fff;width:100%;text-align:center">
+      <td>
+        <small style="background-color:#4169e1;color:#fff;padding:15px 0;display:block;text-align:center;width:100%;margin:100px 0 0;">Copyright&copy; Carpalar 2022 </small>
+      </td>
+    </tr>
+  </table>
+
+  </div>
+  </div>
+</body>
+
+</html>
+    `;
+
+  console.log("Attempting to send email");
+  await sendEmail(email, subject, html);
+};
+
 // VERIFY DRIVER PHONE
 export const verifyDriverPhone = async (req, res) => {
   const { verificationCode } = req.body;
@@ -598,7 +683,7 @@ export const verifyDriverLogin = async (req, res) => {
     }).sort({
       createdAt: -1,
     });
-    console.log('GL:', driver.guarantor.length);
+    console.log("GL:", driver.guarantor.length);
     console.log("OTP:", isOTPCorrect);
     if (!isOTPCorrect)
       return res.status(404).json({
@@ -613,7 +698,6 @@ export const verifyDriverLogin = async (req, res) => {
 
     // If both the driver exists, the OTP corresponds and has not expired
     // Generate a token and send it to the frontend
-
 
     // Payload to sign
     const payload = {
@@ -790,27 +874,143 @@ export const setIsApplicationComplete = async (driverId) => {
 
 // GET DRIVER GUARANTORS
 export const getGuarantors = async (req, res) => {
-  const { driverId } = req.query
+  const { driverId } = req.query;
 
-  if(!driverId) {
-    return res.status(401).json({ message: 'Driver id is required!' })
+  if (!driverId) {
+    return res.status(401).json({ message: "Driver id is required!" });
   }
 
   try {
-    const driver = await DriverModel.findById(driverId)
-    if(!driver) {
-      return res.status(404).json({ message: 'Driver with this id does not exist!' })
+    const driver = await DriverModel.findById(driverId);
+    if (!driver) {
+      return res
+        .status(404)
+        .json({ message: "Driver with this id does not exist!" });
     }
 
-    const guarantors = []
+    const guarantors = [];
 
-    for (let i=0; i < driver.guarantor.length; i++) {
-      let guarantor = await GuarantorModel.findById(driver.guarantor[i]._id)
-      if(guarantor) guarantors.push(guarantor)
+    for (let i = 0; i < driver.guarantor.length; i++) {
+      let guarantor = await GuarantorModel.findById(driver.guarantor[i]._id);
+      if (guarantor) guarantors.push(guarantor);
     }
 
-    return res.status(200).json({ message: 'Guarantors fetched successfully', guarantors })
+    return res
+      .status(200)
+      .json({ message: "Guarantors fetched successfully", guarantors });
   } catch (err) {
-    return res.status(500).json({ message: 'An error occured while we processed your request. Please try again.' })
+    return res
+      .status(500)
+      .json({
+        message:
+          "An error occured while we processed your request. Please try again.",
+      });
   }
-}
+};
+
+// CREATE GUARANTOR
+export const createGuarantor = async (req, res) => {
+  try {
+    console.log('over here 1');
+    const { driverId } = req.query;
+    const { name, relationship, phone, email, address, jobTitle, bvn, nin } =
+      req.body;
+    let driver = await DriverModel.findById(driverId);
+
+    if (!driverId) {
+      return res.status(401).json({ message: "Driver id missing!" });
+    }
+
+    if (
+      !name ||
+      !relationship ||
+      !phone ||
+      !email ||
+      !address ||
+      !jobTitle ||
+      !bvn ||
+      !nin
+    ) {
+      return res.status(401).json({ message: "Missing fields detected!" });
+    }
+
+    if (!driver) {
+      return res.status(404).json({ message: "Driver does not exist!" });
+    }
+
+    console.log('over here 2');
+    let guarantor = new GuarantorModel({
+      name,
+      relationship,
+      phone,
+      email,
+      address,
+      jobTitle,
+      bvn,
+      nin,
+      driver: driverId,
+    });
+
+    console.log('over here 3');
+    await guarantor.save();
+
+    if (driver.guarantor.length === 2) {
+      return res
+        .status(400)
+        .json({
+          message: "Only a maximum of 2 guarantors can be added per account.",
+        });
+    }
+
+    console.log('over here 4');
+    console.log('DRIVER:', driver);
+    console.log('GID:', guarantor._id);
+    driver.guarantor.push(guarantor._id);
+    console.log('over here 5');
+    await driver.save();
+    console.log('over here 6');
+    return res
+      .status(200)
+      .json({ message: `Your request has been sent to ${email}!` });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({
+        message: `An error occured while we processed your request. Please try again.`,
+      });
+  }
+};
+
+// REQUEST GUARANTOR
+export const sendGuarantorEmail = async (req, res) => {
+  try {
+    const { driverId } = req.query;
+    const { guarantorEmail } = req.body;
+
+    console.log("BEFORE IF");
+
+    if (!driverId) {
+      return res.status(401).json({ message: "Driver id missing!" });
+    }
+
+    console.log("BEFORE IF 2");
+    if (!guarantorEmail) {
+      return res
+        .status(401)
+        .json({ message: "Guarantor email cannot be empty!" });
+    }
+
+    console.log("BEFORE SENDING  EMAIL");
+    sendGuarantorRequestEmail(driverId, guarantorEmail);
+    return res
+      .status(200)
+      .json({ message: `Your request has been sent to ${guarantorEmail}!` });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({
+        message: `An error occured while we processed your request. Please try again.`,
+        err,
+      });
+  }
+};

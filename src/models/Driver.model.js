@@ -137,6 +137,22 @@ export const DriverModel = new mongoose.model(
         type: String,
       },
 
+      paymentInterval: {
+        type: String,
+      },
+
+      totalAmountPaid: {
+        type: String,
+      },
+
+      amountLeftToBePaid: {
+        type: String,
+      },
+
+      amountToBePaidMonthly: {
+        type: String,
+      },
+
       downpaymentBudget: {
         type: String,
       },
